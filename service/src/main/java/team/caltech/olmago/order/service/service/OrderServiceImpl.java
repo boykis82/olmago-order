@@ -1,6 +1,7 @@
 package team.caltech.olmago.order.service.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team.caltech.olmago.order.common.message.MessageEnvelope;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
   private final OrderRepository orderRepository;
   private final MessageStore messageStore;
+  private final ObjectMapper objectMapper;
   
   public static final String CONTRACT_COMMAND_BINDING = "contract-command-0";
 
@@ -217,7 +219,7 @@ public class OrderServiceImpl implements OrderService {
   
   private MessageEnvelope wrapCommand(Object e) {
     try {
-      return MessageEnvelope.wrapCommand(CONTRACT_COMMAND_BINDING, e.getClass().getSimpleName(), e);
+      return MessageEnvelope.wrapCommand(CONTRACT_COMMAND_BINDING, e.getClass().getSimpleName(), objectMapper.writeValueAsString(e));
     } catch (JsonProcessingException ex) {
       throw new RuntimeException(ex);
     }
