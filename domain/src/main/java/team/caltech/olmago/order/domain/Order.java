@@ -8,12 +8,16 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "order")
+@Table(
+    name = "ord",
+    indexes = {
+        @Index(name = "ord_n1", columnList = "cust_id, id DESC")
+    }
+)
 public class Order {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,14 +33,20 @@ public class Order {
   @Column(name = "cust_id", nullable = false)
   private long customerId;
   
-  @Column(name = "ord_rcv_dtm", nullable = false)
-  private LocalDateTime orderReceivedDtm;
+  @Column(name = "rcv_req_dtm", nullable = false)
+  private LocalDateTime receiptRequestDtm;
   
-  @Column(name = "ord_cmpl_dtm")
-  private LocalDateTime orderCompletedDtm;
+  @Column(name = "rcv_cmpl_dtm")
+  private LocalDateTime receiptCompletedDtm;
   
-  @Column(name = "ord_cncl_dtm")
-  private LocalDateTime orderCanceledDtm;
+  @Column(name = "cmpl_dtm")
+  private LocalDateTime completedDtm;
+  
+  @Column(name = "cncl_req_dtm")
+  private LocalDateTime cancelRequestDtm;
+  
+  @Column(name = "cncl_dtm")
+  private LocalDateTime canceledDtm;
   
   @Column(name = "pay_id")
   private Long paymentId;
@@ -45,56 +55,74 @@ public class Order {
   private List<OrderDetail> orderDetails = new ArrayList<>();
   
   @Builder
-  public Order(long customerId, LocalDateTime orderReceivedDtm, OrderType orderType) {
+  public Order(long customerId, LocalDateTime receiptRequestDtm, OrderType orderType) {
     this.customerId = customerId;
-    this.orderReceivedDtm = orderReceivedDtm;
+    this.receiptRequestDtm = receiptRequestDtm;
     this.orderType = orderType;
   }
   
-  public void complete(LocalDateTime orderCompletedDtm) {
-    this.orderCompletedDtm = orderCompletedDtm;
-  }
-  
-  public void mapOrderDetailWithContract(String productCode, long contractId) {
+  // 오더 접수 요청 후 각 마이크로서비스에서 완료하면 접수완료 이벤트 받아서 처리 (주문상세에 계약id매핑 등)
+  public void completeDetailReceipt(String productCode, long contractId, LocalDateTime orderReceiptCompletedDtm) {
+    // 건별 접수완료하고
     orderDetails.stream()
         .filter(od -> od.getProductCode().equals(productCode))
         .findAny()
-        .orElseThrow(RuntimeException::new)
-        .mapContractId(contractId);
+        .orElseThrow(IllegalStateException::new)
+        .completeReceipt(contractId, orderReceiptCompletedDtm);
+    
+    // 모두 접수완료되면 전체 접수완료
+    if (orderDetails.stream().allMatch(OrderDetail::receiptCompleted)) {
+      this.receiptCompletedDtm = orderReceiptCompletedDtm;
+    }
   }
   
-  public void mapWithPayment(long paymentId) {
-    this.paymentId = paymentId;
+  public void completeDetail(long contractId, LocalDateTime orderCompletedDtm) {
+    // 건별 완료하고
+    orderDetails.stream()
+        .filter(od -> od.getContractId().equals(contractId))
+        .findAny()
+        .orElseThrow(IllegalStateException::new)
+        .complete(orderCompletedDtm);
+    
+    // 모두 완료되면 전체 완료
+    if (orderDetails.stream().allMatch(OrderDetail::completed)) {
+      this.completedDtm = orderCompletedDtm;
+    }
   }
   
-  public void cancel(LocalDateTime orderCanceledDtm) {
-    this.orderCanceledDtm = orderCanceledDtm;
+  public void requestCancellation(LocalDateTime orderCancelRequestDtm) {
+    this.cancelRequestDtm = orderCancelRequestDtm;
+    orderDetails.forEach(od -> od.requestCancellation(orderCancelRequestDtm));
   }
   
+  public void completeDetailCancellation(long contractId, LocalDateTime orderCanceledDtm) {
+    // 건별 취소하고
+    orderDetails.stream()
+        .filter(od -> od.getContractId().equals(contractId))
+        .findAny()
+        .orElseThrow(IllegalStateException::new)
+        .cancel(orderCanceledDtm);
+  
+    // 모두 취소되면 전체 취소
+    if (orderDetails.stream().allMatch(OrderDetail::canceled)) {
+      this.canceledDtm = orderCanceledDtm;
+    }
+  }
+
+  public boolean completed() {
+    return this.completedDtm != null;
+  }
+  
+  public boolean canceled() {
+    return this.canceledDtm != null;
+  }
+  
+  public boolean cancelling() {
+    return this.cancelRequestDtm != null && this.canceledDtm == null;
+  }
+
   public void addOrderDetails(List<OrderDetail> orderDetails) {
     this.orderDetails = orderDetails;
   }
-  
-  public Long findPackageContractId() {
-    return orderDetails.stream()
-        .filter(od -> od.getContractType() == OrderDetail.ContractType.PACKAGE)
-        .map(OrderDetail::getContractId)
-        .findAny()
-        .orElse(0L);
-  }
-  
-  public Long findOptionContractId() {
-    return orderDetails.stream()
-        .filter(od -> od.getContractType() == OrderDetail.ContractType.OPTION)
-        .map(OrderDetail::getContractId)
-        .findAny()
-        .orElse(0L);
-  }
-  
-  public List<Long> findUnitContractIds() {
-    return orderDetails.stream()
-        .filter(od -> od.getContractType() == OrderDetail.ContractType.UNIT)
-        .map(OrderDetail::getContractId)
-        .collect(Collectors.toList());
-  }
+
 }

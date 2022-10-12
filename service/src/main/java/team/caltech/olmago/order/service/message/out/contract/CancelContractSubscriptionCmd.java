@@ -6,16 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class ReceiveContractTerminationCmd {
+public class CancelContractSubscriptionCmd {
   private long orderId;
-  private LocalDateTime terminationReceivedDateTime;
-  private Long packageContractId;
-  private Long optionContractId;
-  private List<Long> unitContractIds;
+  private LocalDateTime cancelSubscriptionReceiptDateTime;
 }

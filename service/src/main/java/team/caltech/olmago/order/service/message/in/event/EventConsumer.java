@@ -19,6 +19,11 @@ public class EventConsumer {
   }
   
   @Bean
+  public Consumer<Message<ContractSubscriptionReceiptCanceled>> contractSubscriptionReceiptCanceled() {
+    return m -> contractEventHandler.contractSubscriptionReceiptCanceled(m, m.getPayload());
+  }
+  
+  @Bean
   public Consumer<Message<ContractSubscriptionCompleted>> contractSubscriptionCompleted() {
     return m -> contractEventHandler.contractSubscriptionCompleted(m, m.getPayload());
   }
@@ -26,6 +31,11 @@ public class EventConsumer {
   @Bean
   public Consumer<Message<ContractChanged>> contractChanged() {
     return m -> contractEventHandler.contractChanged(m, m.getPayload());
+  }
+  
+  @Bean
+  public Consumer<Message<ContractChangeCanceled>> contractChangeCanceled() {
+    return m -> contractEventHandler.contractChangeCanceled(m, m.getPayload());
   }
   
   @Bean

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -16,5 +15,5 @@ public class TerminationOrderDto {
   private long customerId;
   private Long packageContractId;
   private Long optionContractId;
-  private List<Long> unitContractIds = new ArrayList<>();
+  private List<Long> unitContractIds;
 }

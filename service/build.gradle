@@ -9,8 +9,8 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 ext {
-    mapstructVersion = "1.5.2.Final"
-    okhttpVersion = "4.10.0"
+    //mapstructVersion = "1.5.2.Final"
+    //okhttpVersion = "4.10.0"
     springCloudVersion = "2021.0.3"
     queryDslVersion = "5.0.0"
 }
@@ -31,12 +31,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-    implementation('mysql:mysql-connector-java')
-    testImplementation('com.h2database:h2')
+    //implementation('mysql:mysql-connector-java')
+    //testImplementation('com.h2database:h2')
+    implementation('com.h2database:h2')
 
     testImplementation('io.projectreactor:reactor-test')
 
-    implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
+    //implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
+    implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
     testImplementation('org.springframework.cloud:spring-cloud-stream-test-support')
 
     // lombok
@@ -45,12 +47,12 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 
 	// mock web server
-	testImplementation("com.squareup.okhttp3:mockwebserver:${okhttpVersion}")
-	testImplementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
+//	testImplementation("com.squareup.okhttp3:mockwebserver:${okhttpVersion}")
+//	testImplementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
 
     // QueryDSL
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+//    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+//    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 }
 
 dependencyManagement {

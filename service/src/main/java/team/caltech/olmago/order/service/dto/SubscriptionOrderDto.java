@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -13,8 +12,13 @@ import java.util.List;
 @Getter
 @Builder
 public class SubscriptionOrderDto {
+  @Getter
+  public static class Product {
+    String prodCd;
+  }
+  
   private long customerId;
   private String pkgProdCd;
   private String optProdCd;
-  private List<String> unitProdCds = new ArrayList<>();
+  private List<Product> unitProds;
 }
