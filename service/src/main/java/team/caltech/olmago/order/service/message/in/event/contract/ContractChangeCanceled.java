@@ -1,14 +1,14 @@
 package team.caltech.olmago.order.service.message.in.event.contract;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Getter
 public class ContractChangeCanceled {
-  private final long contractId;
-  private final LocalDateTime eventOccurDtm;
-  private final long orderId;
+  private long contractId;
+  private LocalDateTime eventOccurDtm;
+  private long orderId;
 }
