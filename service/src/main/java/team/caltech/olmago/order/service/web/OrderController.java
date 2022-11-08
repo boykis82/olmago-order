@@ -12,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/olmago/orders/api/v1")
+@RequestMapping("/olmago/api/v1/orders")
 public class OrderController {
   private final OrderService orderService;
   private final MessageEnvelopeRepository messageEnvelopeRepository;
