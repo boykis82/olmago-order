@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import team.caltech.olmago.common.message.MessageEnvelope;
 import team.caltech.olmago.order.domain.Order;
 import team.caltech.olmago.order.domain.OrderDetail;
@@ -67,10 +68,10 @@ public class OrderServiceImpl implements OrderService {
   
   private List<OrderDetail> createOrderDetails(SubscriptionOrderDto dto, Order order, LocalDateTime receiptRequestDtm) {
     List<OrderDetail> orderDetails = new ArrayList<>();
-    if (dto.getPkgProdCd() != null && !dto.getPkgProdCd().isEmpty()) {
+    if (StringUtils.hasText(dto.getPkgProdCd())) {
       orderDetails.add(OrderDetail.builder().order(order).productCode(dto.getPkgProdCd()).contractType(OrderDetail.ContractType.PACKAGE).receiptRequestDtm(receiptRequestDtm).build());
     }
-    if (dto.getOptProdCd() != null && !dto.getOptProdCd().isEmpty()) {
+    if (StringUtils.hasText(dto.getOptProdCd())) {
       orderDetails.add(OrderDetail.builder().order(order).productCode(dto.getOptProdCd()).contractType(OrderDetail.ContractType.OPTION).receiptRequestDtm(receiptRequestDtm).build());
     }
     orderDetails.addAll(

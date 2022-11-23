@@ -1,9 +1,11 @@
 package team.caltech.olmago.order.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team.caltech.olmago.order.domain.Order;
 import team.caltech.olmago.order.domain.OrderDetail;
+import team.caltech.olmago.order.service.config.ObjectMapperConfig;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,10 +21,15 @@ public class OrderDto {
     private Long contractId;
     private String productCode;
     private String contractType;
+    @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
     private LocalDateTime receiptRequestDtm;
+    @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
     private LocalDateTime receiptCompletedDtm;
+    @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
     private LocalDateTime completedDtm;
+    @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
     private LocalDateTime cancelRequestDtm;
+    @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
     private LocalDateTime canceledDtm;
     
     public OrderDetailDto(OrderDetail entity) {
@@ -41,10 +48,15 @@ public class OrderDto {
   private long id;
   private String orderType;
   private long customerId;
+  @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
   private LocalDateTime receiptRequestDtm;
+  @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
   private LocalDateTime receiptCompletedDtm;
+  @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
   private LocalDateTime completedDtm;
+  @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
   private LocalDateTime cancelRequestDtm;
+  @JsonFormat(pattern = ObjectMapperConfig.DATETIME_FORMATTER)
   private LocalDateTime canceledDtm;
   private Long paymentId;
   private List<OrderDetailDto> orderDetails;
